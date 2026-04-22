@@ -1,0 +1,193 @@
+/* ══════════════════════════════════════
+   RESET & TOKENS
+══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* greens */
+  --g50:  #f0fdf6;
+  --g100: #dcfce9;
+  --g200: #bbf7d2;
+  --g300: #86efac;
+  --g400: #4ade80;
+  --g500: #22c55e;
+  --g600: #16a34a;
+  --g700: #15803d;
+
+  /* neutrals */
+  --white:   #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100:#f3f4f6;
+  --gray-200:#e5e7eb;
+  --gray-300:#d1d5db;
+  --gray-400:#9ca3af;
+  --gray-500:#6b7280;
+  --gray-600:#4b5563;
+  --gray-700:#374151;
+  --gray-800:#1f2937;
+  --gray-900:#111827;
+
+  /* semantic */
+  --bg:        var(--white);
+  --bg-soft:   var(--gray-50);
+  --bg-tint:   #f6fef9;
+  --text:      var(--gray-900);
+  --text-2:    var(--gray-600);
+  --text-3:    var(--gray-400);
+  --accent:    var(--g500);
+  --accent-dk: var(--g700);
+  --accent-lt: var(--g100);
+  --border:    var(--gray-200);
+  --border-lt: var(--gray-100);
+
+  /* type */
+  --font-name: 'Playfair Display', serif;
+  --font-head: 'Sora', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  /* space */
+  --r-sm:  8px;
+  --r-md:  12px;
+  --r-lg:  16px;
+  --r-xl:  24px;
+  --r-full: 9999px;
+
+  --tr: 0.25s ease;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+ul { list-style: none; }
+
+/* ══════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════ */
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section { padding: 1.5rem 0 6rem 0; }
+.section-alt { background: var(--bg-soft); }
+.section-tint { background: var(--bg-tint); }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.875rem;
+}
+
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.section-heading {
+  font-family: var(--font-head);
+  font-size: clamp(1.875rem, 3vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--gray-900);
+  margin-bottom: 0.75rem;
+}
+
+.section-sub {
+  font-size: 1.0625rem;
+  font-weight: 300;
+  color: var(--text-2);
+  max-width: 52ch;
+  line-height: 1.75;
+}
+
+/* fade-up on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+.reveal-d4 { transition-delay: 0.4s; }
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.75rem 1.625rem;
+  border-radius: var(--r-full);
+  transition: var(--tr);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btn-green {
+  background: var(--accent);
+  color: #fff;
+  border: 1.5px solid var(--accent);
+}
+.btn-green:hover {
+  background: var(--accent-dk);
+  border-color: var(--accent-dk);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(34,197,94,0.25);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gray-700);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+.btn-ghost:hover { gap: 0.75rem; }
+
+/* PAGES DEFAULT */
+.page { display: none; padding-top: 68px; }
+.page.active { display: block; }
