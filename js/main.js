@@ -38,3 +38,25 @@ await Promise.all([
   renderProjects();
   initReveal();
 });
+
+// Função para copiar o e-mail na página de contato
+function copiarEmail() {
+  navigator.clipboard.writeText("moreiraalessandro901@gmail.com");
+  const btn = document.getElementById("btnCopiar");
+  
+  if (btn) {
+    const textoOriginal = btn.innerHTML;
+    
+    // Muda o visual para dar feedback que funcionou
+    btn.innerHTML = "✅ E-mail Copiado!";
+    btn.style.backgroundColor = "var(--gray-800)";
+    btn.style.borderColor = "var(--gray-800)";
+    
+    // Volta ao normal depois de 2.5 segundos
+    setTimeout(() => {
+      btn.innerHTML = textoOriginal;
+      btn.style.backgroundColor = "var(--accent)";
+      btn.style.borderColor = "var(--accent)";
+    }, 2500);
+  }
+}
