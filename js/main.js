@@ -40,44 +40,52 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function initNavigation() {
-  // 1. Intercepta todos os cliques do site
   document.body.addEventListener('click', function(e) {
     const link = e.target.closest('a');
     
     if (link && link.getAttribute('href')?.startsWith('#')) {
-      e.preventDefault(); // Impede o bug do pulo seco
+      e.preventDefault(); 
       
-      const targetHash = link.getAttribute('href'); // Pega o "#nome"
+      const targetHash = link.getAttribute('href'); // Ex: clica em "#about"
       if (targetHash === '#') return;
 
-      // Procura a seção na página
-      const targetSection = document.querySelector(targetHash);
+      // 1. Tenta achar a seção com o nome exato (Ex: id="about")
+      let targetSection = document.querySelector(targetHash);
+      
+      // 2. LÓGICA INTELIGENTE: Se não achou, tenta colocar "-container" no final (Ex: id="about-container")
+      // Isso resolve o problema de o link se chamar "#about" e a div se chamar "about-container"
+      if (!targetSection) {
+        targetSection = document.querySelector(targetHash + "-container");
+      }
       
       if (targetSection) {
-        // Se achou a seção, rola suavemente
+        // Deu certo! Rola a tela
         targetSection.scrollIntoView({ behavior: 'smooth' });
         
-        // PULO DO GATO: Força o salvamento no histórico!
+        // MUDA A URL E SALVA O HISTÓRICO
         if (window.location.hash !== targetHash) {
           history.pushState(null, null, targetHash);
         }
         
-        // Fecha o menu do celular
+        // Fecha o menu do celular se estiver aberto
         const navLinks = document.querySelector('.nav-links');
         if (navLinks && navLinks.classList.contains('open')) {
             navLinks.classList.remove('open');
         }
       } else {
-        // SE DER ERRO, ELE TE AVISA AQUI!
-        console.error(`🔴 ERRO: Você clicou em "${targetHash}", mas não existe nenhum <div id="${targetHash.replace('#', '')}"> no seu index.html!`);
+        // SE DER ERRO, JOGA UM POP-UP NA SUA TELA PARA VOCÊ VER!
+        alert(`❌ ERRO DE LINK: Você clicou em "${targetHash}".\n\nMas não existe nenhum elemento na página com id="${targetHash.replace('#', '')}" ou id="${targetHash.replace('#', '')}-container".\n\nAbra o navbar.html e arrume o nome do link!`);
       }
     }
   });
 
-  // 2. Faz o botão voltar e avançar do navegador funcionar
+  // Garante que o botão voltar/avançar ache a seção, mesmo se ela tiver "-container" no nome
   window.addEventListener('popstate', () => {
     if (window.location.hash) {
-      const target = document.querySelector(window.location.hash);
+      let target = document.querySelector(window.location.hash);
+      if (!target) {
+        target = document.querySelector(window.location.hash + "-container");
+      }
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
       }
