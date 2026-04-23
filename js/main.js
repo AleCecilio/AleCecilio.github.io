@@ -44,44 +44,49 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Função para gerenciar o clique no menu e o histórico do navegador
 function initNavigation() {
-  // 1. Intercepta o clique nos links do menu
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault(); 
+  
+  // 1. O "Espião Global" (Event Delegation)
+  document.body.addEventListener('click', function(e) {
+    // Verifica se o que foi clicado foi um link (<a>) ou algo dentro dele
+    const link = e.target.closest('a');
+    
+    // Se não for link, ou se o link não começar com "#", deixa o navegador seguir a vida
+    if (!link || !link.getAttribute('href')?.startsWith('#')) return;
 
-      const targetId = this.getAttribute('href');
-      if (targetId === '#') return; // Ignora se for link vazio
+    // Se chegou aqui, é um link do nosso menu!
+    e.preventDefault(); 
 
-      const targetElement = document.querySelector(targetId);
+    const targetId = link.getAttribute('href');
+    if (targetId === '#') return; // Ignora link vazio
 
-      if (targetElement) {
-        // Faz a rolagem suave
-        targetElement.scrollIntoView({
-          behavior: 'smooth'
-        });
+    const targetElement = document.querySelector(targetId);
 
-        // Salva a nova seção no histórico do navegador
+    if (targetElement) {
+      // Faz a rolagem suave
+      targetElement.scrollIntoView({ behavior: 'smooth' });
+
+      // O PULO DO GATO: Só adiciona no histórico se for um destino novo
+      if (window.location.hash !== targetId) {
         history.pushState(null, null, targetId);
-        
-        // (Opcional) Se o menu mobile estiver aberto, fecha ele ao clicar num link
-        const navLinks = document.querySelector('.nav-links');
-        if (navLinks && navLinks.classList.contains('open')) {
-            navLinks.classList.remove('open');
-        }
       }
-    });
+      
+      // Fecha o menu mobile ao clicar (se estiver aberto)
+      const navLinks = document.querySelector('.nav-links');
+      if (navLinks && navLinks.classList.contains('open')) {
+          navLinks.classList.remove('open');
+      }
+    }
   });
 
-  // 2. Faz a tela rolar quando o usuário clica no botão "Voltar" ou "Avançar" do navegador
+// 2. Faz a tela rolar quando o usuário clica no botão "Voltar" ou "Avançar"
   window.addEventListener('popstate', () => {
-    // Se a URL tiver um # (ex: site.com/#sobre)
     if (window.location.hash) {
       const target = document.querySelector(window.location.hash);
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
       }
     } else {
-      // Se não tiver # (ex: site.com/), rola de volta para o topo (Home)
+      // Se voltou até a página limpa (sem #), rola para o topo
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
