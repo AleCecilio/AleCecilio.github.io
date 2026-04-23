@@ -1,6 +1,11 @@
 /* ══════════════════════════════════════
    HERO
 ══════════════════════════════════════ */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /
+}
+
 .hero {
   min-height: calc(100vh - 68px); 
   display: flex;
