@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   // Carrega todas as partes do site ao mesmo tempo
-await Promise.all([
+  await Promise.all([
     loadHTML("navbar-container", "components/navbar.html"),
     loadHTML("projects-container", "pages/projects.html"),
     loadHTML("about-container", "pages/about.html"),
@@ -37,7 +37,55 @@ await Promise.all([
   renderSkills();
   renderProjects();
   initReveal();
+
+  // NOVO: Inicia a navegação com suporte a Histórico
+  initNavigation();
 });
+
+// Função para gerenciar o clique no menu e o histórico do navegador
+function initNavigation() {
+  // 1. Intercepta o clique nos links do menu
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault(); 
+
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return; // Ignora se for link vazio
+
+      const targetElement = document.querySelector(targetId);
+
+      if (targetElement) {
+        // Faz a rolagem suave
+        targetElement.scrollIntoView({
+          behavior: 'smooth'
+        });
+
+        // Salva a nova seção no histórico do navegador
+        history.pushState(null, null, targetId);
+        
+        // (Opcional) Se o menu mobile estiver aberto, fecha ele ao clicar num link
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks && navLinks.classList.contains('open')) {
+            navLinks.classList.remove('open');
+        }
+      }
+    });
+  });
+
+  // 2. Faz a tela rolar quando o usuário clica no botão "Voltar" ou "Avançar" do navegador
+  window.addEventListener('popstate', () => {
+    // Se a URL tiver um # (ex: site.com/#sobre)
+    if (window.location.hash) {
+      const target = document.querySelector(window.location.hash);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Se não tiver # (ex: site.com/), rola de volta para o topo (Home)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
 
 // Função para copiar o e-mail na página de contato
 function copiarEmail() {
