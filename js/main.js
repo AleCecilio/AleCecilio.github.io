@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
   
-  // Função para carregar os arquivos HTML
   const loadHTML = async (id, path) => {
     const el = document.getElementById(id);
     if (el) {
@@ -15,7 +14,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Carrega as partes do site
   await Promise.all([
     loadHTML("navbar-container", "components/navbar.html"),
     loadHTML("projects-container", "pages/projects.html"),
@@ -24,7 +22,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadHTML("contact-container", "pages/contact.html") 
   ]);
 
-  // Carrega o footer
   const footerContainers = document.querySelectorAll('.footer-container');
   for (let container of footerContainers) {
     try {
@@ -33,33 +30,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (e) {}
   }
 
-  // Tratamento de erros: Se uma função der erro, não quebra o resto do site!
-  try { if(typeof renderSkills === 'function') renderSkills(); } catch(e) { console.warn(e); }
-  try { if(typeof renderProjects === 'function') renderProjects(); } catch(e) { console.warn(e); }
-  try { if(typeof initReveal === 'function') initReveal(); } catch(e) { console.warn(e); }
+  // Executa as animações se elas existirem
+  try { if(typeof renderSkills === 'function') renderSkills(); } catch(e) {}
+  try { if(typeof renderProjects === 'function') renderProjects(); } catch(e) {}
+  try { if(typeof initReveal === 'function') initReveal(); } catch(e) {}
 
-  // Ativa comportamento do menu mobile
-  initMenuMobile();
+  // INICIA A NAVEGAÇÃO À PROVA DE FALHAS
+  initNavigation();
 });
 
-// Apenas fecha o menu no celular, a rolagem e o histórico quem faz agora é o CSS!
-function initMenuMobile() {
+function initNavigation() {
+  // 1. Intercepta todos os cliques do site
   document.body.addEventListener('click', function(e) {
     const link = e.target.closest('a');
     
-    // Verifica se clicou em um link que leva para uma seção (#)
     if (link && link.getAttribute('href')?.startsWith('#')) {
-      const navLinks = document.querySelector('.nav-links');
+      e.preventDefault(); // Impede o bug do pulo seco
       
-      // Se o menu de sanduíche estiver aberto, fecha ele
-      if (navLinks && navLinks.classList.contains('open')) {
-          navLinks.classList.remove('open');
+      const targetHash = link.getAttribute('href'); // Pega o "#nome"
+      if (targetHash === '#') return;
+
+      // Procura a seção na página
+      const targetSection = document.querySelector(targetHash);
+      
+      if (targetSection) {
+        // Se achou a seção, rola suavemente
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // PULO DO GATO: Força o salvamento no histórico!
+        if (window.location.hash !== targetHash) {
+          history.pushState(null, null, targetHash);
+        }
+        
+        // Fecha o menu do celular
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks && navLinks.classList.contains('open')) {
+            navLinks.classList.remove('open');
+        }
+      } else {
+        // SE DER ERRO, ELE TE AVISA AQUI!
+        console.error(`🔴 ERRO: Você clicou em "${targetHash}", mas não existe nenhum <div id="${targetHash.replace('#', '')}"> no seu index.html!`);
       }
+    }
+  });
+
+  // 2. Faz o botão voltar e avançar do navegador funcionar
+  window.addEventListener('popstate', () => {
+    if (window.location.hash) {
+      const target = document.querySelector(window.location.hash);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
 }
 
-// Função para copiar o e-mail
 function copiarEmail() {
   navigator.clipboard.writeText("moreiraalessandro901@gmail.com");
   const btn = document.getElementById("btnCopiar");
